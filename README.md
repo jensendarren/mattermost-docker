@@ -40,30 +40,6 @@ args:
 ```
 The `app` Dockerfile will read the `edition` build argument to install Team (`edition = 'team'`) or Enterprise (`edition != team`) edition.
 
-### Database container
-This repository offer a Docker image for the Mattermost database. It is a customized PostgreSQL image that you should configure with following environment variables :
-* `POSTGRES_USER`: database username
-* `POSTGRES_PASSWORD`: database password
-* `POSTGRES_DB`: database name
-
-It is possible to use your own PostgreSQL database, or even use MySQL. But you will need to ensure that Application container can connect to the database (see [Application container](#application-container))
-
-#### AWS
-If deploying to AWS, you could also set following variables to enable [Wal-E](https://github.com/wal-e/wal-e) backup to S3 :
-* `AWS_ACCESS_KEY_ID`: AWS access key
-* `AWS_SECRET_ACCESS_KEY`: AWS secret
-* `WALE_S3_PREFIX`: AWS s3 bucket name
-* `AWS_REGION`: AWS region
-
-All four environment variables are required. It will enable completed WAL segments sent to archive storage (S3). The base backup and clean up can be done through the following command:
-```bash
-# Base backup
-docker exec mattermost-db su - postgres sh -c "/usr/bin/envdir /etc/wal-e.d/env /usr/bin/wal-e backup-push /var/lib/postgresql/data"
-# Keep the most recent 7 base backups and remove the old ones
-docker exec mattermost-db su - postgres sh -c "/usr/bin/envdir /etc/wal-e.d/env /usr/bin/wal-e delete --confirm retain 7"
-```
-Those tasks can be executed through a cron job or systemd timer.
-
 ### Application container
 Application container run the Mattermost application. You should configure it with following environment variables :
 * `MM_USERNAME`: database username
