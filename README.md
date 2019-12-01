@@ -4,6 +4,16 @@ This project enables deployment of a Mattermost server in a multi-node productio
 
 [![Build Status](https://travis-ci.org/mattermost/mattermost-docker.svg?branch=master)](https://travis-ci.org/mattermost/mattermost-docker)
 
+## Installing on AWS using Docker Compose on EC2 and RDS Aurora Serverless
+
+I've forked this repo to make a few of modificatons (including these notes) for deployment to AWS.
+
+* Start up a new RDS Aurora Serverless Postgres database.
+* In [docker-compose.yml](./docker-compose.yml) update the `MM_USERNAME`, `MM_PASSWORD`, `MM_DBNAME` and `MM_SQLSETTINGS_DATASOURCE` url to match that of the new database setup in RDS.
+* Setup a new EC2 instance using Ubuntu and ssh into that instance as usual
+* Install Docker and Docker Compose on the new EC2 instance by following [these instructions](https://docs.mattermost.com/install/prod-docker.html). You will need to replace `<username>` in these instructions with `ubuntu` (or the username of the linux instance you are using). Also in step 3 when cloning the mattermost-docker repo you should clone this forked repo!
+* Check the status of the running containers `docker ps` and make sure they are healthy. If they are not something may need to be fixed so check the Docker Logs to see what is wrong. It could be the connection to the database most likely so make sure the correct variables are set in the docker-compose.yml file.
+
 Notes:
 - The default Mattermost edition for this repo has changed from Team Edition to Enterprise Edition. Please see [Choose Edition](#choose-edition-to-install) section.
 - To install this Docker project on AWS Elastic Beanstalk please see [AWS Elastic Beanstalk Guide](contrib/aws/README.md).
